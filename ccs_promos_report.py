@@ -100,7 +100,7 @@ def fetch_data(sh, target_date):
     idx_date = find_col(["date"], 0)
     idx_from = find_col(["from", "name"], 5)
     idx_subject = find_col(["subject"], 6)
-    idx_count = find_col(["count", "total item"], 7)
+    idx_count = find_col(["count", "total item", "total virtual"], 9)
     idx_done = find_col(["done date"], 15)
 
     def normalize_date(d):
