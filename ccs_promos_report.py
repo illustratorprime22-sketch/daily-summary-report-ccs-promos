@@ -129,9 +129,6 @@ def fetch_data(sh, target_date):
         row_date_raw = str(row[idx_date]).strip()
         row_date = normalize_date(row_date_raw)
         
-        if row_date == today_str:
-            continue
-            
         email_from = str(row[idx_from]).strip()
         email_subject = str(row[idx_subject]).strip()
         total_items = str(row[idx_count]).strip()
@@ -139,11 +136,16 @@ def fetch_data(sh, target_date):
         done_date_raw = str(row[idx_done]).strip()
         done_date = normalize_date(done_date_raw)
         
-        is_pending = not done_date or done_date.lower() == 'pending'
-        
-        if is_pending and not email_subject:
+        # Skip if no date or if it matches today
+        if not row_date or row_date == today_str:
             continue
             
+        # --- VALIDATION: Skip header rows and empty placeholder rows ---
+        if not email_subject or email_subject.lower() == 'email subject' or email_from.lower() == 'email from':
+            continue
+            
+        is_pending = not done_date or done_date.lower() == 'pending'
+        
         # 1. Emails Received
         if row_date == target_date_norm:
             emails_received += 1
@@ -158,7 +160,7 @@ def fetch_data(sh, target_date):
                 pass
         
         # 3. Pending
-        if is_pending and row_date:
+        if is_pending:
             pending_count += 1
             
         # 4. Detailed Rows
@@ -278,6 +280,7 @@ def main():
         emails_received, emails_completed, total_items, pending, detailed = fetch_data(sh, target_date)
         html_content = format_html(target_date, emails_received, emails_completed, total_items, pending, detailed)
         subject = f"CCS Promos Summary: {target_date}"
+        print(f"Sending email: {subject}")
         send_email(subject, html_content)
         print("Success!")
     except Exception as e:
