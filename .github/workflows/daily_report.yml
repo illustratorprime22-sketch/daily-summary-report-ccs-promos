@@ -1,7 +1,7 @@
 name: CCS Promos Daily Report
 
 on:
-  workflow_dispatch: # Triggered via Google Apps Script at 6:55 PM IST (Mon-Fri)
+  workflow_dispatch:
 
 
 jobs:
